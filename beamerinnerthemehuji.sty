@@ -1,0 +1,91 @@
+\mode<presentation>
+\usepackage{pgfplots}
+\usepackage{fp}
+% \newcommand{\range}[2]{0.5*()}
+\newcommand{\bord}{1.5ex}
+\newcommand{\ph}{\the\paperheight}
+\newcommand{\pw}{\the\paperwidth}
+
+\setbeamertemplate{background}{
+  \begin{tikzpicture} %
+  % A path that follows the edges of the current page
+  \useasboundingbox (0,0) rectangle(\pw,\ph);
+
+  \def \rect{
+  (\bord,\bord) rectangle (\pw -\bord,\ph-\bord);
+  }
+
+  \def \jagged{
+  (0ex,                   0.5*\ph+0.15*rnd*\ph) --
+  (0.15*\pw+0.3*rnd*\pw,  \ph) -- 
+  (\pw,                   \ph) --
+  (\pw,                   0.3*\ph) --
+  (0.6*\pw+rnd*0.25*\pw,  0ex) --
+  (0.1*\pw+0.4*rnd*\pw,   0ex) --
+  (0ex,                   0.1*\ph+0.15*rnd*\ph) ;
+  }
+
+  % save jagged path under name tmppath
+  \path[save path=\tmppath] \jagged;
+  % fill rectangle
+  \fill[color=color2, fill opacity=1] \rect;
+  % set current path to tmppath
+  \pgfsyssoftpath@setcurrentpath{\tmppath};
+  % fill jagged shape
+  \fill[color=color1, fill opacity=1] -- cycle  ;
+  % fill intersection of the two shapes with a darker shade
+  \begin{scope}
+  \clip \rect;
+  \pgfsyssoftpath@setcurrentpath{\tmppath};
+  \fill[color=color3, fill opacity=1] ;
+  \end{scope}
+  % white triangle on top right
+  \filldraw[color=white,fill=white, thick]
+    (\pw,0.5*\ph) --
+    (\pw,\ph) --
+    (0.7*\pw,\ph) --
+    cycle;
+  % insert huji logo on top right
+  \node[inner sep=0pt] (hujilogo2) at (0.92*\the\paperwidth,0.85*\the\paperheight)
+    {\includegraphics[width=1cm]{hujilogo2}};
+  %show all the above only on the first frame
+  \ifnum\thepage>1\relax%
+    \fill[white,opacity=1] (0,0) rectangle(\the\paperwidth,\the\paperheight);
+  \fi
+  \end{tikzpicture}
+}
+
+% Title page, this is what's written on the first slide
+\defbeamertemplate*{title page}{huji}[1][]
+{ 
+   \vskip2cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=2.2cm,sep=0pt,#1]{title page header}
+      \usebeamerfont{title}\bfseries\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\bfseries\insertsubtitle\par}
+      \fi
+    \end{beamercolorbox}%
+    \vskip1cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=2.2cm,#1]{author}
+      \usebeamerfont{author}\bfseries\insertauthor%
+      \ifx\insertinstitute\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{institute}\bfseries\insertinstitute\par}
+      \fi
+    \end{beamercolorbox}
+     \vskip0.2cm%
+    \begin{beamercolorbox}[wd=12cm,leftskip=2.2cm,#1]{date}
+      \usebeamerfont{date}\bfseries\displaydate{presentationdate}%
+    \end{beamercolorbox}
+  \vfill
+}
+
+% Items
+\setbeamertemplate{items}[square]
+\setbeamertemplate{sections/subsections in toc}[square]
+
+\mode
+<all>
